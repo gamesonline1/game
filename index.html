@@ -37,7 +37,8 @@ canvas.height = 600;
 let bird = {
     x: 150,
     y: canvas.height / 2,
-    size: 15, // You might want to adjust this size depending on your image
+    size: 12
+    , // You might want to adjust this size depending on your image
     dy: 0
 };
 
@@ -182,7 +183,11 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Add this to your JavaScript file
+// Add touch event listener for mobile devices
+document.addEventListener('touchstart', (e) => {
+    jump();
+});
+
 
 // Add a keydown event listener for the "X" key
 document.addEventListener('keydown', function(e) {
@@ -195,7 +200,8 @@ document.addEventListener('keydown', function(e) {
 
 updateGame(); // Start the game loop
 
+
     
-</script></script>
+</script>
 </body>
 </html>
