@@ -31,8 +31,10 @@ canvas {
 let pointSound = new Audio('sound1.mp3'); // Ensure the path is correct
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-canvas.width = 400;
-canvas.height = 600;
+
+// Set the canvas width and height to fill the window
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
 let bird = {
     x: 150,
@@ -199,6 +201,7 @@ document.addEventListener('keydown', function(e) {
 });
 
 updateGame(); // Start the game loop
+
 
 
     
