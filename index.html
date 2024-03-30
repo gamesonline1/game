@@ -26,6 +26,176 @@ canvas {
     <!-- Add this to your HTML file -->
 <button id="restartButton" style="display: none;">Restart</button>
 <canvas id="gameCanvas"></canvas>
-<script src="https://raw.githubusercontent.com/gamesonline1/game/main/js/script.js"></script>
+<script>
+
+let pointSound = new Audio('sound1.mp3'); // Ensure the path is correct
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 400;
+canvas.height = 600;
+
+let bird = {
+    x: 150,
+    y: canvas.height / 2,
+    size: 15, // You might want to adjust this size depending on your image
+    dy: 0
+};
+
+let gravity = 0.5;
+let obstacles = [];
+let gameRunning = true;
+let score = 0;
+let highScore = localStorage.getItem('highScore') ? Number(localStorage.getItem('highScore')) : 0;
+const obstacleWidth = 30;
+const gapHeight = 150;
+const obstacleGap = 300;
+let obstacleSpeed = -3;
+
+// Load bird image
+let birdImage = new Image();
+birdImage.src = 'bird.png'; // Make sure the path to your image is correct
+
+function drawBird() {
+    // Adjustments may be needed for image size and positioning
+    ctx.drawImage(birdImage, bird.x - bird.size, bird.y - bird.size, bird.size * 2, bird.size * 2);
+}
+
+function createObstacle() {
+    let obstacleTopHeight = Math.floor(Math.random() * (canvas.height / 2)) + 20;
+    let obstacleBottomHeight = canvas.height - obstacleTopHeight - gapHeight;
+    obstacles.push({
+        x: canvas.width,
+        y: 0,
+        width: obstacleWidth,
+        topHeight: obstacleTopHeight,
+        bottomHeight: obstacleBottomHeight,
+        passed: false,
+    });
+}
+
+function drawObstacles() {
+    obstacles.forEach(obstacle => {
+        ctx.fillStyle = '#0F0';
+        ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.topHeight);
+        ctx.fillRect(obstacle.x, canvas.height - obstacle.bottomHeight, obstacle.width, obstacle.bottomHeight);
+    });
+}
+
+function updateObstacles() {
+    obstacles.forEach(obstacle => {
+        obstacle.x += obstacleSpeed;
+    });
+
+    if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - obstacleGap) {
+        createObstacle();
+    }
+
+    obstacles = obstacles.filter(obstacle => obstacle.x + obstacle.width > 0);
+}
+
+function checkCollision() {
+    if (bird.y + bird.size > canvas.height || bird.y - bird.size < 0) {
+        gameRunning = false;
+    }
+
+    obstacles.forEach(obstacle => {
+        if (bird.x + bird.size > obstacle.x && bird.x - bird.size < obstacle.x + obstacle.width) {
+            if (bird.y - bird.size < obstacle.topHeight || bird.y + bird.size > canvas.height - obstacle.bottomHeight) {
+                gameRunning = false;
+            }
+        }
+    });
+}
+
+function jump() {
+    bird.dy = -10;
+}
+
+function updateScore() {
+    obstacles.forEach(obstacle => {
+        if (obstacle.x + obstacle.width < bird.x && !obstacle.passed) {
+            score += 999; // Increase score by 999 instead of 1
+            obstacle.passed = true;
+            pointSound.play(); // Play the sound when the bird passes an obstacle
+        }
+    });
+
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText("Score: " + score, 10, 20);
+}
+
+
+
+// Add this function to reset the game state
+function resetGame() {
+    bird = {
+        x: 150,
+        y: canvas.height / 2,
+        size: 15,
+        dy: 0
+    };
+    obstacles = [];
+    gameRunning = true;
+    score = 0;
+    obstacleSpeed = -3;
+}
+
+// Modify the updateGame function
+function updateGame() {
+    if (!gameRunning) {
+        displayGameOver();
+
+        // Add an event listener for the space key
+        document.addEventListener('keydown', function restartGame(e) {
+            if (e.code === 'Space') {
+                // Remove the event listener to prevent multiple instances
+                document.removeEventListener('keydown', restartGame);
+
+                // Reset the game and start the game loop again
+                resetGame();
+                updateGame();
+            }
+        });
+
+        return;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bird.dy += gravity;
+    bird.y += bird.dy;
+
+    drawBird();
+    drawObstacles();
+    updateObstacles();
+    checkCollision();
+    updateScore();
+
+    if (gameRunning) {
+        requestAnimationFrame(updateGame);
+    }
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+        jump();
+    }
+});
+
+// Add this to your JavaScript file
+
+// Add a keydown event listener for the "X" key
+document.addEventListener('keydown', function(e) {
+    if (e.code === 'KeyX' && !gameRunning) {
+        // Reset the game and start the game loop again
+        resetGame();
+        updateGame();
+    }
+});
+
+updateGame(); // Start the game loop
+
+    
+</script></script>
 </body>
 </html>
