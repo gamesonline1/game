@@ -114,7 +114,7 @@ function jump() {
 function updateScore() {
     obstacles.forEach(obstacle => {
         if (obstacle.x + obstacle.width < bird.x && !obstacle.passed) {
-            score += 999; // Increase score by 999 instead of 1
+            score += 1; // Increase score by 999 instead of 1
             obstacle.passed = true;
             pointSound.play(); // Play the sound when the bird passes an obstacle
         }
