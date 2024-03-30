@@ -23,7 +23,7 @@ let obstacleSpeed = -3;
 
 // Load bird image
 let birdImage = new Image();
-birdImage.src = 'bird.png'; // Make sure the path to your image is correct
+birdImage.src = 'https://raw.githubusercontent.com/gamesonline1/game/main/bird.png'; // Make sure the path to your image is correct
 
 function drawBird() {
     // Adjustments may be needed for image size and positioning
